@@ -1,3 +1,3 @@
 # CM-Health-Project
 
-all the codes will be uploaded here once the final testing 7 evaluation is done
+All the codes and related stuff will be uploaded here once the final testing & evaluation is done
