@@ -46,3 +46,38 @@ sensor_summary = missing_sensor_train \
 # Display styled DataFrame (mask NaNs just for styling)
 styled_df = sensor_summary.fillna(0)
 styled_df.style.background_gradient(cmap='viridis')
+
+
+
+###########################################################
+# Demographic columns (no exclusions)
+dem_cols = train_dem_df.columns
+
+# Missing values in train demographics
+missing_demo_train = pd.DataFrame({
+    'Feature': dem_cols,
+    '[TRAIN DEMO] Missing Count': train_dem_df[dem_cols].isnull().sum().values,
+    '[TRAIN DEMO] Missing %': (train_dem_df[dem_cols].isnull().sum().values / len(train_dem_df)) * 100
+})
+
+# Unique value counts in train demographics
+unique_demo_train = pd.DataFrame({
+    'Feature': dem_cols,
+    'Unique Values [TRAIN DEMO]': train_dem_df[dem_cols].nunique().values
+})
+
+# Data types
+dtypes_demo = pd.DataFrame({
+    'Feature': dem_cols,
+    'Data Type': train_dem_df[dem_cols].dtypes.values
+})
+
+# Merge summaries (train only)
+demo_summary = (
+    missing_demo_train
+    .merge(unique_demo_train, on='Feature', how='left')
+    .merge(dtypes_demo, on='Feature', how='left')
+)
+
+# Display styled summary
+demo_summary.style.background_gradient(cmap='viridis')
