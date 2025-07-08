@@ -13,3 +13,36 @@ def filtered_describe(df, name):
 # Only analyze train sets!
 display(filtered_describe(train_df, "train_df"))
 display(filtered_describe(train_dem_df, "train_dem_df"))
+
+
+############################################################
+
+# Define prefixes to exclude
+excluded_prefixes = ('acc_', 'rot_', 'thm_', 'tof_')
+sensor_cols = [col for col in train_df.columns if not col.startswith(excluded_prefixes)]
+
+# Sensor Data Summary for TRAIN
+missing_sensor_train = pd.DataFrame({
+    'Feature': sensor_cols,
+    '[TRAIN] Missing Count': train_df[sensor_cols].isnull().sum().values,
+    '[TRAIN] Missing %': (train_df[sensor_cols].isnull().sum().values / len(train_df)) * 100
+})
+
+unique_sensor_train = pd.DataFrame({
+    'Feature': sensor_cols,
+    'Unique Values [TRAIN]': train_df[sensor_cols].nunique().values
+})
+
+dtypes_sensor = pd.DataFrame({
+    'Feature': sensor_cols,
+    'Data Type': train_df[sensor_cols].dtypes.values
+})
+
+# Merge all summaries (NO test set)
+sensor_summary = missing_sensor_train \
+    .merge(unique_sensor_train, on='Feature', how='left') \
+    .merge(dtypes_sensor, on='Feature', how='left')
+
+# Display styled DataFrame (mask NaNs just for styling)
+styled_df = sensor_summary.fillna(0)
+styled_df.style.background_gradient(cmap='viridis')
